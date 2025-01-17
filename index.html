@@ -1,48 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, FlatList, Text, StyleSheet } from 'react-native';
-import { getCategories, saveCategories } from '../utils/storage';
+import React, { useState } from 'react';
+import { View, TextInput, Button, StyleSheet, Picker } from 'react-native';
+import { saveTransaction } from '../utils/storage';
 
-const CategoryManagerScreen = () => {
-  const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState('');
+const TransactionForm = ({ onSave, categories }) => {
+  const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState(categories[0]?.name || '');
+  const [comment, setComment] = useState('');
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const data = await getCategories();
-      setCategories(data);
+  const handleSubmit = async () => {
+    if (!amount || !category) return alert('Заполните все поля');
+    const transaction = {
+      id: Date.now(),
+      amount: parseFloat(amount),
+      category,
+      comment,
+      date: new Date().toISOString(),
     };
-    fetchCategories();
-  }, []);
-
-  const handleAddCategory = async () => {
-    if (newCategory.trim() === '') return;
-    const updatedCategories = [...categories, { id: Date.now(), name: newCategory }];
-    setCategories(updatedCategories);
-    await saveCategories(updatedCategories);
-    setNewCategory('');
+    await saveTransaction(transaction);
+    onSave(transaction);
+    setAmount('');
+    setCategory(categories[0]?.name || '');
+    setComment('');
   };
 
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Добавить категорию"
-        value={newCategory}
-        onChangeText={setNewCategory}
+        placeholder="Сумма"
+        keyboardType="numeric"
+        value={amount}
+        onChangeText={setAmount}
       />
-      <Button title="Добавить" onPress={handleAddCategory} />
-      <FlatList
-        data={categories}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <Text style={styles.category}>{item.name}</Text>}
+      <Picker
+        selectedValue={category}
+        style={styles.picker}
+        onValueChange={(itemValue) => setCategory(itemValue)}
+      >
+        {categories.map((cat) => (
+          <Picker.Item key={cat.id} label={cat.name} value={cat.name} />
+        ))}
+      </Picker>
+      <TextInput
+        style={styles.input}
+        placeholder="Комментарий"
+        value={comment}
+        onChangeText={setComment}
       />
+      <Button title="Сохранить" onPress={handleSubmit} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
   },
   input: {
@@ -51,10 +62,10 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
   },
-  category: {
-    fontSize: 18,
-    padding: 10,
+  picker: {
+    height: 50,
+    marginBottom: 20,
   },
 });
 
-export default CategoryManagerScreen;
+export default TransactionForm;
