@@ -1,21 +1,58 @@
-import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import { PieChart, LineChart } from 'react-native-chart-kit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Запрос разрешений на уведомления
-export const requestNotificationPermissions = async () => {
-  const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-  if (status !== 'granted') {
-    await Permissions.askAsync(Permissions.NOTIFICATIONS);
-  }
+const ReportScreen = () => {
+  const [data, setData] = useState([]);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const transactions = JSON.parse(await AsyncStorage.getItem('transactions')) || [];
+      const categories = {};
+      transactions.forEach((t) => {
+        categories[t.category] = (categories[t.category] || 0) + t.amount;
+      });
+
+      setData(
+        Object.keys(categories).map((key) => ({
+          name: key,
+          amount: categories[key],
+          color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+          legendFontColor: '#000',
+          legendFontSize: 15,
+        }))
+      );
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <PieChart
+        data={data}
+        width={Dimensions.get('window').width}
+        height={220}
+        chartConfig={{
+          backgroundColor: '#1cc910',
+          backgroundGradientFrom: '#eff3ff',
+          backgroundGradientTo: '#efefef',
+          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        }}
+        accessor="amount"
+        backgroundColor="transparent"
+        paddingLeft="15"
+        absolute
+      />
+    </View>
+  );
 };
 
-// Планирование уведомлений
-export const scheduleNotification = async (title, body) => {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title,
-      body,
-    },
-    trigger: { seconds: 10 }, // Уведомление через 10 секунд (можно заменить на желаемый триггер)
-  });
-};
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+});
+
+export default ReportScreen;
