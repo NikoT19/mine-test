@@ -1,49 +1,34 @@
+
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { PieChart, LineChart } from 'react-native-chart-kit';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ReportScreen = () => {
-  const [data, setData] = useState([]);
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      const transactions = JSON.parse(await AsyncStorage.getItem('transactions')) || [];
-      const categories = {};
-      transactions.forEach((t) => {
-        categories[t.category] = (categories[t.category] || 0) + t.amount;
-      });
+const SettingsScreen = () => {
+  const [budget, setBudget] = useState('');
 
-      setData(
-        Object.keys(categories).map((key) => ({
-          name: key,
-          amount: categories[key],
-          color: '#' + Math.floor(Math.random() * 16777215).toString(16),
-          legendFontColor: '#000',
-          legendFontSize: 15,
-        }))
-      );
+  useEffect(() => {
+    const fetchBudget = async () => {
+      const storedBudget = await AsyncStorage.getItem('budget');
+      setBudget(storedBudget || '');
     };
-    fetchData();
+    fetchBudget();
   }, []);
+
+  const saveBudget = async () => {
+    await AsyncStorage.setItem('budget', budget);
+    alert('Бюджет сохранён!');
+  };
 
   return (
     <View style={styles.container}>
-      <PieChart
-        data={data}
-        width={Dimensions.get('window').width}
-        height={220}
-        chartConfig={{
-          backgroundColor: '#1cc910',
-          backgroundGradientFrom: '#eff3ff',
-          backgroundGradientTo: '#efefef',
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        }}
-        accessor="amount"
-        backgroundColor="transparent"
-        paddingLeft="15"
-        absolute
+      <Text style={styles.label}>Установить месячный бюджет:</Text>
+      <TextInput
+        style={styles.input}
+        keyboardType="numeric"
+        value={budget}
+        onChangeText={setBudget}
       />
+      <Button title="Сохранить" onPress={saveBudget} />
     </View>
   );
 };
@@ -53,6 +38,16 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
 });
 
-export default ReportScreen;
+export default SettingsScreen;
