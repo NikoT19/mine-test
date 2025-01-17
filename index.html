@@ -1,39 +1,14 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export const getTransactions = async () => {
-  try {
-    const data = await AsyncStorage.getItem('transactions');
-    return data ? JSON.parse(data) : [];
-  } catch (error) {
-    console.error('Ошибка при чтении транзакций:', error);
-    return [];
-  }
+export const pieChartConfig = {
+  backgroundColor: '#1E2923',
+  backgroundGradientFrom: '#08130D',
+  backgroundGradientTo: '#08130D',
+  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
 };
 
-export const saveTransaction = async (transaction) => {
-  try {
-    const transactions = await getTransactions();
-    transactions.push(transaction);
-    await AsyncStorage.setItem('transactions', JSON.stringify(transactions));
-  } catch (error) {
-    console.error('Ошибка при сохранении транзакции:', error);
-  }
-};
-
-export const getCategories = async () => {
-  try {
-    const data = await AsyncStorage.getItem('categories');
-    return data ? JSON.parse(data) : [];
-  } catch (error) {
-    console.error('Ошибка при чтении категорий:', error);
-    return [];
-  }
-};
-
-export const saveCategories = async (categories) => {
-  try {
-    await AsyncStorage.setItem('categories', JSON.stringify(categories));
-  } catch (error) {
-    console.error('Ошибка при сохранении категорий:', error);
-  }
+export const lineChartConfig = {
+  backgroundColor: '#1E2923',
+  backgroundGradientFrom: '#08130D',
+  backgroundGradientTo: '#08130D',
+  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+  strokeWidth: 2, // Толщина линии
 };
