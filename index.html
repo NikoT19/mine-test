@@ -1,8 +1,8 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import App from "./App"; // Главный экран
-import TransactionForm from "./TransactionForm"; // Экран транзакции
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import App from './App';
+import TransactionForm from './TransactionForm';
 
 const Stack = createStackNavigator();
 
@@ -10,19 +10,8 @@ export default function Main() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        {/* Главный экран */}
-        <Stack.Screen
-          name="Home"
-          component={App}
-          options={{ title: "Главная страница" }}
-        />
-
-        {/* Экран транзакции */}
-        <Stack.Screen
-          name="TransactionForm"
-          component={TransactionForm}
-          options={{ title: "Транзакция" }}
-        />
+        <Stack.Screen name="Home" component={App} options={{ headerShown: false }} />
+        <Stack.Screen name="TransactionForm" component={TransactionForm} />
       </Stack.Navigator>
     </NavigationContainer>
   );
