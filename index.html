@@ -1,46 +1,24 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import * as Keychain from 'react-native-keychain';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AuthScreen from './screens/AuthScreen';
+import HomeScreen from './screens/HomeScreen';
+import AddTransactionScreen from './screens/AddTransactionScreen';
+import ReportScreen from './screens/ReportScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
-const AuthScreen = ({ navigation }) => {
-  const [pin, setPin] = useState('');
+const Stack = createStackNavigator();
 
-  const handleLogin = async () => {
-    const credentials = await Keychain.getGenericPassword();
-    if (credentials && credentials.password === pin) {
-      navigation.replace('Главная');
-    } else {
-      Alert.alert('Ошибка', 'Неверный PIN');
-    }
-  };
-
+export default function App() {
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        secureTextEntry
-        keyboardType="numeric"
-        placeholder="Введите PIN"
-        value={pin}
-        onChangeText={setPin}
-      />
-      <Button title="Войти" onPress={handleLogin} />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Auth">
+        <Stack.Screen name="Auth" component={AuthScreen} options={{ title: 'Авторизация' }} />
+        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Главная' }} />
+        <Stack.Screen name="AddTransaction" component={AddTransactionScreen} options={{ title: 'Добавить Транзакцию' }} />
+        <Stack.Screen name="Report" component={ReportScreen} options={{ title: 'Статистика' }} />
+        <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Настройки' }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 20,
-  },
-});
-
-export default AuthScreen;
+}
