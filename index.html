@@ -1,58 +1,8 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const AddTransactionScreen = ({ navigation }) => {
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('');
-  const [comment, setComment] = useState('');
-
-  const handleSave = async () => {
-    const transaction = { amount: parseFloat(amount), category, comment, date: new Date().toISOString() };
-    const transactions = JSON.parse(await AsyncStorage.getItem('transactions')) || [];
-    transactions.push(transaction);
-    await AsyncStorage.setItem('transactions', JSON.stringify(transactions));
-    Alert.alert('Успешно', 'Транзакция добавлена');
-    navigation.goBack();
-  };
-
-  return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Сумма"
-        keyboardType="numeric"
-        value={amount}
-        onChangeText={setAmount}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Категория"
-        value={category}
-        onChangeText={setCategory}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Комментарий"
-        value={comment}
-        onChangeText={setComment}
-      />
-      <Button title="Сохранить" onPress={handleSave} />
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 20,
-  },
-});
-
-export default AddTransactionScreen;
+[
+  { "id": 1, "name": "Еда", "icon": "🍔" },
+  { "id": 2, "name": "Транспорт", "icon": "🚗" },
+  { "id": 3, "name": "Развлечения", "icon": "🎮" },
+  { "id": 4, "name": "Здоровье", "icon": "💊" },
+  { "id": 5, "name": "Зарплата", "icon": "💼" },
+  { "id": 6, "name": "Прочее", "icon": "🔧" }
+]
