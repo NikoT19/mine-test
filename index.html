@@ -1,23 +1,51 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from './screens/HomeScreen';
-import AddTransactionScreen from './screens/AddTransactionScreen';
-import SettingsScreen from './screens/SettingsScreen';
-import { Provider as PaperProvider } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Tab = createBottomTabNavigator();
+const HomeScreen = () => {
+  const [transactions, setTransactions] = useState([]);
+  const [balance, setBalance] = useState(0);
 
-export default function App() {
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = JSON.parse(await AsyncStorage.getItem('transactions')) || [];
+      setTransactions(data);
+      const total = data.reduce((acc, item) => acc + (item.type === 'income' ? item.amount : -item.amount), 0);
+      setBalance(total);
+    };
+    fetchData();
+  }, []);
+
   return (
-    <PaperProvider>
-      <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen name="Главная" component={HomeScreen} />
-          <Tab.Screen name="Добавить" component={AddTransactionScreen} />
-          <Tab.Screen name="Настройки" component={SettingsScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <View style={styles.container}>
+      <Text style={styles.title}>Текущий баланс: {balance} ₽</Text>
+      <FlatList
+        data={transactions}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.transaction}>
+            <Text>{item.category}: {item.amount} ₽</Text>
+          </View>
+        )}
+      />
+    </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 20,
+  },
+  transaction: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+});
+
+export default HomeScreen;
