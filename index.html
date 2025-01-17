@@ -1,14 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 
-export default function TransactionForm({ route }) {
-  const { amount } = route.params;
-
+export default function App({ navigation }) {
   return (
-    <LinearGradient colors={['#101916', '#355245']} style={styles.container}>
-      <Text style={styles.text}>Transaction Amount: {amount}</Text>
-    </LinearGradient>
+    <View style={styles.container}>
+      <Text style={styles.title}>Welcome!</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter your name"
+      />
+      <Button
+        title="Proceed"
+        onPress={() => navigation.navigate('TransactionForm')}
+      />
+    </View>
   );
 }
 
@@ -18,8 +23,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  text: {
-    color: '#E3E5D8',
-    fontSize: 20,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    width: '80%',
+    padding: 10,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderRadius: 5,
   },
 });
