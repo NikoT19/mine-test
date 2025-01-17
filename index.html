@@ -1,8 +1,39 @@
-[
-  { "id": 1, "name": "Еда", "icon": "🍔" },
-  { "id": 2, "name": "Транспорт", "icon": "🚗" },
-  { "id": 3, "name": "Развлечения", "icon": "🎮" },
-  { "id": 4, "name": "Здоровье", "icon": "💊" },
-  { "id": 5, "name": "Зарплата", "icon": "💼" },
-  { "id": 6, "name": "Прочее", "icon": "🔧" }
-]
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export const getTransactions = async () => {
+  try {
+    const data = await AsyncStorage.getItem('transactions');
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Ошибка при чтении транзакций:', error);
+    return [];
+  }
+};
+
+export const saveTransaction = async (transaction) => {
+  try {
+    const transactions = await getTransactions();
+    transactions.push(transaction);
+    await AsyncStorage.setItem('transactions', JSON.stringify(transactions));
+  } catch (error) {
+    console.error('Ошибка при сохранении транзакции:', error);
+  }
+};
+
+export const getCategories = async () => {
+  try {
+    const data = await AsyncStorage.getItem('categories');
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Ошибка при чтении категорий:', error);
+    return [];
+  }
+};
+
+export const saveCategories = async (categories) => {
+  try {
+    await AsyncStorage.setItem('categories', JSON.stringify(categories));
+  } catch (error) {
+    console.error('Ошибка при сохранении категорий:', error);
+  }
+};
