@@ -1,34 +1,53 @@
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { View, TextInput, Button, StyleSheet, Text, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const HomeScreen = () => {
-  const [transactions, setTransactions] = useState([]);
-  const [balance, setBalance] = useState(0);
+const AddTransactionScreen = () => {
+  const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState('');
+  const [type, setType] = useState('expense'); // 'income' или 'expense'
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = JSON.parse(await AsyncStorage.getItem('transactions')) || [];
-      setTransactions(data);
-      const total = data.reduce((acc, item) => acc + (item.type === 'income' ? item.amount : -item.amount), 0);
-      setBalance(total);
+  const addTransaction = async () => {
+    if (!amount || !category) {
+      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля');
+      return;
+    }
+
+    const newTransaction = {
+      id: Date.now().toString(),
+      amount: parseFloat(amount),
+      category,
+      type,
+      date: new Date(),
     };
-    fetchData();
-  }, []);
+
+    const existingData = JSON.parse(await AsyncStorage.getItem('transactions')) || [];
+    await AsyncStorage.setItem('transactions', JSON.stringify([...existingData, newTransaction]));
+
+    Alert.alert('Успех', 'Транзакция добавлена');
+    setAmount('');
+    setCategory('');
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Текущий баланс: {balance} ₽</Text>
-      <FlatList
-        data={transactions}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.transaction}>
-            <Text>{item.category}: {item.amount} ₽</Text>
-          </View>
-        )}
+      <Text style={styles.label}>Сумма:</Text>
+      <TextInput
+        style={styles.input}
+        keyboardType="numeric"
+        value={amount}
+        onChangeText={setAmount}
       />
+      <Text style={styles.label}>Категория:</Text>
+      <TextInput
+        style={styles.input}
+        value={category}
+        onChangeText={setCategory}
+      />
+      <Button title="Добавить доход" onPress={() => setType('income')} />
+      <Button title="Добавить расход" onPress={() => setType('expense')} />
+      <Button title="Сохранить" onPress={addTransaction} />
     </View>
   );
 };
@@ -38,15 +57,16 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  title: {
-    fontSize: 20,
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
     marginBottom: 20,
-  },
-  transaction: {
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 10,
   },
 });
 
-export default HomeScreen;
+export default AddTransactionScreen;
