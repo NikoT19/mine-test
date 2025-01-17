@@ -2,26 +2,27 @@ import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function RegistrationScreen({ navigation }) {
+export default function LoginScreen({ navigation }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = async () => {
-    if (name && password) {
-      const userData = {
-        name,
-        password,
-      };
-      await AsyncStorage.setItem("user", JSON.stringify(userData));
-      navigation.replace("Login"); // Перенаправление на экран входа
+  const handleLogin = async () => {
+    const storedData = await AsyncStorage.getItem("user");
+    if (storedData) {
+      const userData = JSON.parse(storedData);
+      if (userData.name === name && userData.password === password) {
+        navigation.replace("Home"); // Перенаправление на главный экран
+      } else {
+        alert("Неверное имя или пароль!");
+      }
     } else {
-      alert("Пожалуйста, заполните все поля!");
+      alert("Пользователь не зарегистрирован!");
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Регистрация</Text>
+      <Text style={styles.title}>Вход</Text>
       <TextInput
         style={styles.input}
         placeholder="Введите имя"
@@ -35,7 +36,7 @@ export default function RegistrationScreen({ navigation }) {
         value={password}
         onChangeText={setPassword}
       />
-      <Button title="Зарегистрироваться" onPress={handleRegister} />
+      <Button title="Войти" onPress={handleLogin} />
     </View>
   );
 }
@@ -61,3 +62,4 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 });
+
