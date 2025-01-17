@@ -1,65 +1,20 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import RegistrationScreen from "./screens/RegistrationScreen";
+import LoginScreen from "./screens/LoginScreen";
+import HomeScreen from "./screens/HomeScreen";
 
-export default function LoginScreen({ navigation }) {
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
+const Stack = createStackNavigator();
 
-  const handleLogin = async () => {
-    const storedData = await AsyncStorage.getItem("user");
-    if (storedData) {
-      const userData = JSON.parse(storedData);
-      if (userData.name === name && userData.password === password) {
-        navigation.replace("Home"); // Перенаправление на главный экран
-      } else {
-        alert("Неверное имя или пароль!");
-      }
-    } else {
-      alert("Пользователь не зарегистрирован!");
-    }
-  };
-
+export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Вход</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Введите имя"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Введите пароль"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <Button title="Войти" onPress={handleLogin} />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Registration">
+        <Stack.Screen name="Registration" component={RegistrationScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  input: {
-    width: "100%",
-    padding: 10,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-  },
-});
-
