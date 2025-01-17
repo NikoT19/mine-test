@@ -1,41 +1,40 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { saveCategories } from '../utils/storage';
+import { StyleSheet } from 'react-native';
 
-const BudgetForm = ({ currentBudget, onUpdate }) => {
-  const [budget, setBudget] = useState(currentBudget || '');
-
-  const handleSave = async () => {
-    if (!budget) return Alert.alert('Ошибка', 'Введите сумму бюджета');
-    onUpdate(parseFloat(budget));
-    setBudget('');
-    Alert.alert('Успешно', 'Бюджет обновлён');
-  };
-
-  return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Введите бюджет"
-        keyboardType="numeric"
-        value={budget}
-        onChangeText={setBudget}
-      />
-      <Button title="Сохранить" onPress={handleSave} />
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
+export const globalStyles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
     padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#343a40',
+  },
+  text: {
+    fontSize: 16,
+    color: '#495057',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
     marginBottom: 20,
+    borderRadius: 5,
+    backgroundColor: '#fff',
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
-export default BudgetForm;
+  
