@@ -1,40 +1,24 @@
-import { StyleSheet } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AuthScreen from './screens/AuthScreen';
+import HomeScreen from './screens/HomeScreen';
+import AddTransactionScreen from './screens/AddTransactionScreen';
+import ReportScreen from './screens/ReportScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
-export const globalStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#343a40',
-  },
-  text: {
-    fontSize: 16,
-    color: '#495057',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 20,
-    borderRadius: 5,
-    backgroundColor: '#fff',
-  },
-  button: {
-    backgroundColor: '#007bff',
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
+const Stack = createStackNavigator();
 
-  
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Auth">
+        <Stack.Screen name="Auth" component={AuthScreen} options={{ title: 'Авторизация' }} />
+        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Главная' }} />
+        <Stack.Screen name="AddTransaction" component={AddTransactionScreen} options={{ title: 'Добавить Транзакцию' }} />
+        <Stack.Screen name="Report" component={ReportScreen} options={{ title: 'Статистика' }} />
+        <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Настройки' }} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
