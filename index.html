@@ -1,53 +1,27 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Picker } from 'react-native';
-import { saveTransaction } from '../utils/storage';
+import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { saveCategories } from '../utils/storage';
 
-const TransactionForm = ({ onSave, categories }) => {
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState(categories[0]?.name || '');
-  const [comment, setComment] = useState('');
+const BudgetForm = ({ currentBudget, onUpdate }) => {
+  const [budget, setBudget] = useState(currentBudget || '');
 
-  const handleSubmit = async () => {
-    if (!amount || !category) return alert('Заполните все поля');
-    const transaction = {
-      id: Date.now(),
-      amount: parseFloat(amount),
-      category,
-      comment,
-      date: new Date().toISOString(),
-    };
-    await saveTransaction(transaction);
-    onSave(transaction);
-    setAmount('');
-    setCategory(categories[0]?.name || '');
-    setComment('');
+  const handleSave = async () => {
+    if (!budget) return Alert.alert('Ошибка', 'Введите сумму бюджета');
+    onUpdate(parseFloat(budget));
+    setBudget('');
+    Alert.alert('Успешно', 'Бюджет обновлён');
   };
 
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Сумма"
+        placeholder="Введите бюджет"
         keyboardType="numeric"
-        value={amount}
-        onChangeText={setAmount}
+        value={budget}
+        onChangeText={setBudget}
       />
-      <Picker
-        selectedValue={category}
-        style={styles.picker}
-        onValueChange={(itemValue) => setCategory(itemValue)}
-      >
-        {categories.map((cat) => (
-          <Picker.Item key={cat.id} label={cat.name} value={cat.name} />
-        ))}
-      </Picker>
-      <TextInput
-        style={styles.input}
-        placeholder="Комментарий"
-        value={comment}
-        onChangeText={setComment}
-      />
-      <Button title="Сохранить" onPress={handleSubmit} />
+      <Button title="Сохранить" onPress={handleSave} />
     </View>
   );
 };
@@ -62,10 +36,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
   },
-  picker: {
-    height: 50,
-    marginBottom: 20,
-  },
 });
 
-export default TransactionForm;
+export default BudgetForm;
